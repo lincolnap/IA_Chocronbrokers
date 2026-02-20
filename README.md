@@ -47,11 +47,21 @@ Proyecto para levantar **N8N**, **Supabase** y **Redis** con Docker Compose.
 
 Ver [.env.example](.env.example) para el resto.
 
-## Integrar Supabase
+## Desplegar Supabase
 
-Supabase se ejecuta con su propio stack de Docker. Para integrarlo en este proyecto (misma red, mismo flujo de trabajo), sigue la guía:
+1. Asegúrate de tener **Docker en ejecución** (Docker Desktop o daemon).
+2. El archivo **`supabase/.env`** ya está creado con las variables necesarias (secretos por defecto para desarrollo; cámbialos en producción).
+3. Ejecuta el script de despliegue:
+   ```bash
+   ./scripts/deploy-supabase.sh
+   ```
+   La primera vez clona el stack oficial de Supabase en `supabase-docker/`, copia `supabase/.env` y levanta todos los servicios.
+4. Tras el despliegue:
+   - **API (Kong):** http://localhost:8000  
+   - **PostgreSQL:** localhost:5432  
+   - **Pooler:** localhost:6543  
 
-- **[supabase/README.md](supabase/README.md)** — Opción con Supabase CLI u opción con Docker Compose oficial.
+Para más opciones (Supabase CLI, etc.): **[supabase/README.md](supabase/README.md)**.
 
 ## Comandos útiles
 
