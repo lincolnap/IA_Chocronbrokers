@@ -1,0 +1,88 @@
+# Proyecto: N8N + Supabase + Redis
+# Uso: docker compose up -d
+# Con Supabase: ver README para integrar el stack oficial de Supabase
+
+name: n8n-stack
+
+services:
+  # ---------- N8N ----------
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - "${N8N_PORT:-5678}:5678"
+    environment:
+      N8N_HOST: ${N8N_HOST:-localhost}
+      N8N_PORT: 5678
+      N8N_PROTOCOL: http
+      # Base de datos PostgreSQL
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: n8n-postgres
+      DB_POSTGRESDB_PORT: 5432
+      DB_POSTGRESDB_DATABASE: ${N8N_DB_NAME:-n8n}
+      DB_POSTGRESDB_USER: ${N8N_DB_USER:-n8n}
+      DB_POSTGRESDB_PASSWORD: ${N8N_DB_PASSWORD:?N8N_DB_PASSWORD requerido}
+      # En producción, define una clave de cifrado
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-}
+      # Cola con Redis (opcional, mejora rendimiento)
+      QUEUE_BULL_REDIS_HOST: redis
+      QUEUE_BULL_REDIS_PORT: 6379
+      EXECUTIONS_MODE: ${N8N_EXECUTIONS_MODE:-regular}
+      WEBHOOK_URL: ${N8N_WEBHOOK_URL:-http://localhost:5678/}
+      GENERIC_TIMEZONE: ${N8N_TIMEZONE:-America/Santiago}
+    volumes:
+      - n8n_data:/home/node/.n8n
+    depends_on:
+      n8n-postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - app_network
+
+  # PostgreSQL para N8N (no compartido con Supabase para evitar conflictos)
+  n8n-postgres:
+    image: postgres:16-alpine
+    container_name: n8n-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${N8N_DB_USER:-n8n}
+      POSTGRES_PASSWORD: ${N8N_DB_PASSWORD:?N8N_DB_PASSWORD requerido}
+      POSTGRES_DB: ${N8N_DB_NAME:-n8n}
+    volumes:
+      - n8n_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app_network
+
+  # ---------- Redis (colas, caché, sesiones) ----------
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes ${REDIS_PASSWORD:+--requirepass $REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - app_network
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  n8n_data:
+  n8n_postgres_data:
+  redis_data:
