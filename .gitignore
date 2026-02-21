@@ -1,7 +1,4 @@
-.env
-.env.local
-#supabase/.env
 *.log
 .DS_Store
-#supabase-docker/
-#volumes/
+supabase-docker/
+volumes/

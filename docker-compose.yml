@@ -1,6 +1,4 @@
-# Proyecto: N8N + Supabase + Redis
-# Uso: docker compose up -d
-# Con Supabase: ver README para integrar el stack oficial de Supabase
+# N8N + PostgreSQL + Redis. Supabase se levanta con ./scripts/deploy-supabase.sh
 
 name: n8n-stack
 
