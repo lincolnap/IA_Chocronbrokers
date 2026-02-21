@@ -1,0 +1,17 @@
+# HTTPS para N8N y Supabase (certificado auto-firmado)
+# N8N: https://n8n.iarealtor
+# Supabase: https://supabase.iarealtor
+
+:80 {
+  redir https://{host}{uri} permanent
+}
+
+n8n.iarealtor {
+  tls internal
+  reverse_proxy n8n:5678
+}
+
+supabase.iarealtor {
+  tls internal
+  reverse_proxy host.docker.internal:8000
+}

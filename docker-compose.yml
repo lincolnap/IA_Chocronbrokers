@@ -11,7 +11,7 @@ services:
     ports:
       - "${N8N_PORT:-5678}:5678"
     environment:
-      N8N_HOST: ${N8N_HOST:-localhost}
+      N8N_HOST: ${N8N_HOST:-n8n.iarealtor}
       N8N_PORT: 5678
       N8N_PROTOCOL: http
       # Base de datos PostgreSQL
@@ -27,7 +27,7 @@ services:
       QUEUE_BULL_REDIS_HOST: redis
       QUEUE_BULL_REDIS_PORT: 6379
       EXECUTIONS_MODE: ${N8N_EXECUTIONS_MODE:-regular}
-      WEBHOOK_URL: ${N8N_WEBHOOK_URL:-http://localhost:5678/}
+      WEBHOOK_URL: ${N8N_WEBHOOK_URL:-https://n8n.iarealtor/}
       GENERIC_TIMEZONE: ${N8N_TIMEZONE:-America/Santiago}
     volumes:
       - n8n_data:/home/node/.n8n
@@ -58,6 +58,25 @@ services:
     networks:
       - app_network
 
+  # ---------- Caddy (HTTPS: n8n.localhost, supabase.localhost) ----------
+  caddy:
+    image: caddy:2-alpine
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "${HTTPS_PORT:-443}:443"
+      - "80:80"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - n8n
+    networks:
+      - app_network
+
   # ---------- Redis (colas, caché, sesiones) ----------
   redis:
     image: redis:7-alpine
@@ -84,3 +103,5 @@ volumes:
   n8n_data:
   n8n_postgres_data:
   redis_data:
+  caddy_data:
+  caddy_config:
