@@ -1,20 +1,11 @@
-# HTTPS para N8N y Supabase (certificado auto-firmado)
-# N8N: https://206.189.239.17
-# Supabase: https://206.189.239.17:444
+# HTTPS para N8N y Supabase
+# N8N: https://n8n.themorganagency.org
+# Supabase: https://supabase.themorganagency.org
 
-{
-  default_sni 206.189.239.17
-}
-:80 {
-  redir https://{host}{uri} permanent
-}
-
-206.189.239.17 {
-  tls internal
+n8n.themorganagency.org {
   reverse_proxy n8n:5678
 }
 
-206.189.239.17:444 {
-  tls internal
+supabase.themorganagency.org {
   reverse_proxy host.docker.internal:8000
 }
