@@ -1,11 +1,6 @@
-# HTTPS para N8N y Supabase
-# N8N: https://n8n.themorganagency.org
-# Supabase: https://supabase.themorganagency.org
+# HTTPS para Supabase
+# Supabase: https://supabase2.chocronbrokers.com
 
-n8n.themorganagency.org {
-  reverse_proxy n8n:5678
-}
-
-supabase.themorganagency.org {
+supabase2.chocronbrokers.com {
   reverse_proxy host.docker.internal:8000
 }

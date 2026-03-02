@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Levanta N8N y Supabase. Requiere Docker en ejecución.
+# Levanta Caddy (proxy HTTPS) y Supabase. Requiere Docker en ejecución.
 
 set -e
 cd "$(dirname "$0")/.."
 
-echo "Levantando N8N (PostgreSQL + Redis)..."
+echo "Levantando Caddy (proxy HTTPS)..."
 docker compose up -d
 
 echo ""
@@ -13,5 +13,5 @@ echo "Levantando Supabase..."
 
 echo ""
 echo "Listo."
-echo "  N8N:       http://localhost:5678"
-echo "  Supabase:  http://localhost:8000"
+echo "  Supabase:  https://supabase2.chocronbrokers.com"
+echo "  API Kong:  http://localhost:8000"

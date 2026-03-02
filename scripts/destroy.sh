@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Destruye todo: para N8N y Supabase (contenedores + volúmenes).
+# Destruye todo: para Caddy y Supabase (contenedores + volúmenes).
 # Uso: ./scripts/destroy.sh [--yes]
 #   --yes, -y   Borrar también supabase-docker/ sin preguntar
 
@@ -13,7 +13,7 @@ for arg in "$@"; do
   esac
 done
 
-echo "Deteniendo y eliminando N8N (contenedores + volúmenes)..."
+echo "Deteniendo y eliminando Caddy (contenedor + volúmenes)..."
 docker compose down -v --remove-orphans
 
 if [[ -d supabase-docker ]]; then
